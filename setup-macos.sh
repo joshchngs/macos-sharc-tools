@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 hostname="$1"
+machine_name="$(echo "$hostname" | tr '._' '--')"
 
 bindir="$HOME/.local/bin"
 
@@ -19,13 +20,14 @@ if [[ ! -x "$(which orb)" ]] ; then
     exit 1
 fi
 
-orb create -a amd64 ubuntu:focal "$hostname"
-orb -m "$hostname" "$(dirname $0)/install-sharc-toolchain.sh" "$cces_version" "$toolchain_timestamp"
+orb create -a amd64 ubuntu:focal "$machine_name"
+orb -m "$machine_name" sudo hostnamectl set-hosname "$hostname"
+orb -m "$machine_name" "$(dirname $0)/install-sharc-toolchain.sh" "$cces_version" "$toolchain_timestamp"
 
 if [[ ":$PATH:" == *":$bindir:"* ]] ; then
     cat "$(dirname $0)/generate-cces-wrappers.sh" | \
         sed -e "
-            s|^orb_hostname=$|orb_hostname=${hostname}|g ;
+            s|^orb_machine_name=$|orb_machine_name=${machine_name}|g ;
             s|^cces_version=$|cces_version=${cces_version}|g ;" \
         > "$bindir/generate-cces-wrappers.sh"
     chmod +x "$bindir/generate-cces-wrappers.sh"

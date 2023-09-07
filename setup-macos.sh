@@ -23,15 +23,15 @@ orb create -a amd64 ubuntu:focal "$hostname"
 orb -m "$hostname" "$(dirname $0)/install-sharc-toolchain.sh" "$cces_version" "$toolchain_timestamp"
 
 if [[ ":$PATH:" == *":$bindir:"* ]] ; then
-    cat "$(dirname $0)/install-cces-wrappers.sh" | \
+    cat "$(dirname $0)/generate-cces-wrappers.sh" | \
         sed -e "
             s|^orb_hostname=$|orb_hostname=${hostname}|g ;
             s|^cces_version=$|cces_version=${cces_version}|g ;" \
-        > "$bindir/install-cces-wrappers.sh"
-    chmod +x "$bindir/install-cces-wrappers.sh"
-    "$bindir/install-cces-wrappers.sh"
+        > "$bindir/generate-cces-wrappers.sh"
+    chmod +x "$bindir/generate-cces-wrappers.sh"
+    "$bindir/generate-cces-wrappers.sh"
 else
-    echo "$bindir doesn't appear in \$PATH - see install-cces-wrappers.sh for manual installation"
+    echo "$bindir doesn't appear in \$PATH - see generate-cces-wrappers.sh for manual installation"
     exit 1
 fi
 

@@ -19,8 +19,12 @@ if [[ ! -x "$(which orb)" ]] ; then
     exit 1
 fi
 
-orb create -a amd64 ubuntu:focal "$hostname"
-orb -m "$hostname" "$(dirname $0)/install-sharc-toolchain.sh" "$cces_version" "$toolchain_timestamp"
+if orbctl info "$hostname" 2>/dev/null ; then
+    echo "Orb machine already created - skipping this step"
+else
+    orb create -a amd64 ubuntu:focal "$hostname"
+    orb -m "$hostname" "$(dirname $0)/install-sharc-toolchain.sh" "$cces_version" "$toolchain_timestamp"
+fi
 
 if [[ ":$PATH:" == *":$bindir:"* ]] ; then
     cat "$(dirname $0)/generate-cces-wrappers.sh" | \

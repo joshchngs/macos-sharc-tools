@@ -2,7 +2,7 @@
 
 hostname="$1"
 
-bindir="$HOME/.local/bin"
+bindir="$HOME/.local/bin/$hostname"
 
 cces_version=2.11.1
 toolchain_timestamp=202210191423
@@ -26,7 +26,10 @@ else
     orb -m "$hostname" "$(dirname $0)/install-sharc-toolchain.sh" "$cces_version" "$toolchain_timestamp"
 fi
 
-if [[ ":$PATH:" == *":$bindir:"* ]] ; then
+if [ -d "$bindir" ] ; then
+    echo "$bindir already exists, assuming it's set up correctly. Skipping."
+else
+    mkdir -p "$bindir"
     cat "$(dirname $0)/generate-cces-wrappers.sh" | \
         sed -e "
             s|^orb_hostname=$|orb_hostname=${hostname}|g ;
@@ -34,9 +37,7 @@ if [[ ":$PATH:" == *":$bindir:"* ]] ; then
         > "$bindir/generate-cces-wrappers.sh"
     chmod +x "$bindir/generate-cces-wrappers.sh"
     "$bindir/generate-cces-wrappers.sh"
-else
-    echo "$bindir doesn't appear in \$PATH - see generate-cces-wrappers.sh for manual installation"
-    exit 1
+    echo "$bindir" | sudo tee "/etc/paths.d/$hostname" > /dev/null
 fi
 
 license_dat="$(dirname $0)/license.dat"

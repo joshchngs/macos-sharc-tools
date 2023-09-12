@@ -5,7 +5,7 @@
 # for each 
 
 # Fill these with the correct values (see setup.sh)
-orb_machine_name=
+orb_hostname=
 cces_version=
 bin_name=$(basename $0)
 
@@ -49,4 +49,4 @@ if [ "$bin_name" == "generate-cces-wrappers.sh" ] ; then
     exit 0
 fi
 
-orb -m "$orb_machine_name" "/opt/analog/cces/$cces_version/$bin_name" "$@"
+orb -m "$orb_hostname" "/opt/analog/cces/$cces_version/$bin_name" "$@"

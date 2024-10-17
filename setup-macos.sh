@@ -4,8 +4,9 @@ hostname="$1"
 
 bindir="$HOME/.local/bin/$hostname"
 
-cces_version=2.11.1
-toolchain_timestamp=202210191423
+cces_version=3.0.1
+toolchain_timestamp=202403270419
+deb_file=$(realpath "adi-cces-linux-amd64-${cces_version}.deb")
 
 if [ -z "${hostname}" ] ; then
     echo "Usage: ./setup-macos.sh <hostname>"
@@ -23,7 +24,7 @@ if orbctl info "$hostname" 2>/dev/null ; then
     echo "Orb machine already created - skipping this step"
 else
     orb create -a amd64 ubuntu:focal "$hostname"
-    orb -m "$hostname" "$(dirname $0)/install-sharc-toolchain.sh" "$cces_version" "$toolchain_timestamp"
+    orb -m "$hostname" "$(dirname $0)/install-sharc-toolchain.sh" "$cces_version" "$toolchain_timestamp" "$deb_file"
 fi
 
 if [ -d "$bindir" ] ; then
